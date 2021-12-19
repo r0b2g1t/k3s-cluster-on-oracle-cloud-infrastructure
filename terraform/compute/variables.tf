@@ -63,7 +63,8 @@ locals {
     source_type = "image"
     server_ip_1 = "10.0.0.11"
     server_ip_2 = "10.0.0.12"
-    k3os_image  = "https://github.com/rancher/k3os/releases/download/v0.21.5-k3s2r1/k3os-arm64.iso"
+    // release: v0.21.5-k3s2r1
+    k3os_image = "https://github.com/rancher/k3os/releases/download/v0.21.5-k3s2r1/k3os-arm64.iso"
     metadata = {
       "ssh_authorized_keys" = join("\n", var.ssh_authorized_keys)
     }
@@ -77,7 +78,8 @@ locals {
     source_type = "image"
     worker_ip_1 = "10.0.0.21"
     worker_ip_2 = "10.0.0.22"
-    k3os_image  = "https://github.com/rancher/k3os/releases/download/v0.21.5-k3s2r1/k3os-amd64.iso"
+    // release: v0.21.5-k3s2r1
+    k3os_image = "https://github.com/rancher/k3os/releases/download/v0.21.5-k3s2r1/k3os-amd64.iso"
     metadata = {
       "ssh_authorized_keys" = join("\n", var.ssh_authorized_keys)
     }
