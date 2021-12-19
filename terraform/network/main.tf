@@ -4,7 +4,7 @@ resource "oci_core_vcn" "cluster_network" {
   cidr_blocks = [
     "10.0.0.0/24"
   ]
-  display_name = Cluster
+  display_name = "cluster-vcn"
   dns_label    = "internal"
 }
 
@@ -44,7 +44,7 @@ resource "oci_core_default_route_table" "internet_route_table" {
 
 resource "oci_core_subnet" "cluster_subnet" {
   compartment_id      = var.compartment_id
-  availability_domain = "xdil:US-SANJOSE-1-AD-1"
+  availability_domain = data.oci_identity_availability_domain.ad.name
   vcn_id              = oci_core_vcn.cluster_network.id
   cidr_block          = oci_core_vcn.cluster_network.cidr_blocks[0]
   display_name        = "cluster subnet"

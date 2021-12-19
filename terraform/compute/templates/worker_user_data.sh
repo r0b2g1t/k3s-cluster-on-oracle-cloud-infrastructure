@@ -1,9 +1,10 @@
 #!/bin/bash
-apt-get update
-wget https://raw.githubusercontent.com/rancher/k3os/master/install.sh
-chmod +x install.sh
+if [[ "$USER" =~ "ubuntu" ]]; then
+  apt-get update
+  wget https://raw.githubusercontent.com/rancher/k3os/master/install.sh
+  chmod +x install.sh
 
-cat > config.yaml <<EOF
+  cat > config.yaml <<EOF
 hostname: ${host_name}
 k3os:
   dns_nameservers:
@@ -24,3 +25,7 @@ k3os:
 ssh_authorized_keys:
 - ${ssh_public_key}
 EOF
+  sudo ./install.sh --takeover --config config.yaml --no-format /dev/sda1 ${k3os_image}
+  sleep 30
+  sudo reboot
+fi

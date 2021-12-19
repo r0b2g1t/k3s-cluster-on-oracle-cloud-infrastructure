@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ "$USER" == "ubuntu"]]; then
+if [[ "$USER" =~ "ubuntu" ]]; then
   apt-get update
   wget https://raw.githubusercontent.com/rancher/k3os/master/install.sh
   chmod +x install.sh
@@ -51,5 +51,8 @@ k3os:
 ssh_authorized_keys:
 - ${ssh_public_key}
 EOF
+    sleep 30
   fi;
+  sudo ./install.sh --takeover --config config.yaml --no-format /dev/sda1 ${k3os_image}
+  sudo reboot
 fi

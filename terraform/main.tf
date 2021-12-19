@@ -4,12 +4,7 @@ terraform {
       source = "hashicorp/oci"
     }
   }
-}
-
-provider "oci" {
-  region              = "us-sanjose-1"
-  auth                = "SecurityToken"
-  config_file_profile = "terraform-deploy"
+  required_version = ">= 0.15"
 }
 
 provider "oci" {
@@ -24,13 +19,15 @@ module "network" {
   source = "./network"
 
   compartment_id = var.compartment_id
+  tenancy_ocid   = var.tenancy_ocid
 }
 
 module "compute" {
   source     = "./compute"
-  depends_on = ["network"]
+  depends_on = [module.network]
 
   compartment_id    = var.compartment_id
-  public_subnet_id  = module.network.cluster_subnet.id
+  tenancy_ocid      = var.tenancy_ocid
+  cluster_subnet_id = module.network.cluster_subnet.id
   permit_ssh_nsg_id = module.network.permit_ssh.id
 }
