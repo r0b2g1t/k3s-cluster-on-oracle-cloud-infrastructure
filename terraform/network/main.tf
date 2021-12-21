@@ -43,12 +43,11 @@ resource "oci_core_default_route_table" "internet_route_table" {
 }
 
 resource "oci_core_subnet" "cluster_subnet" {
-  compartment_id      = var.compartment_id
-  availability_domain = data.oci_identity_availability_domain.ad.name
-  vcn_id              = oci_core_vcn.cluster_network.id
-  cidr_block          = oci_core_vcn.cluster_network.cidr_blocks[0]
-  display_name        = "cluster subnet"
-  security_list_ids   = [oci_core_vcn.cluster_network.default_security_list_id]
+  compartment_id    = var.compartment_id
+  vcn_id            = oci_core_vcn.cluster_network.id
+  cidr_block        = oci_core_vcn.cluster_network.cidr_blocks[0]
+  display_name      = "cluster subnet"
+  security_list_ids = [oci_core_vcn.cluster_network.default_security_list_id]
 }
 
 resource "oci_core_network_security_group" "permit_ssh" {

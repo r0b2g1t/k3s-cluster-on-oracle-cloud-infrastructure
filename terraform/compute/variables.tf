@@ -21,9 +21,6 @@ variable "permit_ssh_nsg_id" {
 variable "ssh_authorized_keys" {
   description = "List of authorized SSH keys"
   type        = list(any)
-  default = [
-    "",
-  ]
 }
 
 variable "master_1_user_data" {
@@ -76,8 +73,8 @@ locals {
     // Canonical-Ubuntu-20.04-aarch64-2021.12.01-0
     source_id   = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaaalepl4teucgdomo6jbzgskc4r6fhrz7tp5twfosnqp47lk5v6qoa"
     source_type = "image"
-    worker_ip_1 = "10.0.0.21"
-    worker_ip_2 = "10.0.0.22"
+    worker_ip_0 = "10.0.0.21"
+    worker_ip_1 = "10.0.0.22"
     // release: v0.21.5-k3s2r1
     k3os_image = "https://github.com/rancher/k3os/releases/download/v0.21.5-k3s2r1/k3os-amd64.iso"
     metadata = {

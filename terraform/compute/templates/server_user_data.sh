@@ -1,7 +1,6 @@
 #!/bin/bash
 
-if [[ "$USER" =~ "ubuntu" ]]; then
-  apt-get update
+if [[ $(uname -a) =~ "Ubuntu" ]]; then
   wget https://raw.githubusercontent.com/rancher/k3os/master/install.sh
   chmod +x install.sh
 
@@ -14,7 +13,7 @@ k3os:
   k3s_args:
   - server
   - --cluster-init       # <-- When running a multi server cluster (only add this to the first node of the cluster!)
-  #- --node-ip=10.40.151.150 # <-- Private network IP of this machine
+  - --node-ip=${server_1_ip} # <-- Private network IP of this machine
   modules:
   - kvm
   - nvme
@@ -24,7 +23,7 @@ k3os:
   sysctls:
     kernel.kptr_restrict: "1"
     kernel.printk: 4 4 1 7
-  token: ${token}
+  token: "${token}"
 ssh_authorized_keys:
 - ${ssh_public_key}
 EOF
@@ -47,12 +46,23 @@ k3os:
   sysctls:
     kernel.kptr_restrict: "1"
     kernel.printk: 4 4 1 7
-  token: ${token}
+  token: "${token}"
 ssh_authorized_keys:
 - ${ssh_public_key}
 EOF
     sleep 30
   fi;
-  sudo ./install.sh --takeover --config config.yaml --no-format /dev/sda1 ${k3os_image}
-  sudo reboot
+  ./install.sh --takeover --config config.yaml --no-format /dev/sda1 ${k3os_image}
+  reboot
+fi
+
+DIR="/etc/rancher/"
+
+if [ -d "$DIR" ] && [ "$HOSTNAME" == "k3s-server-1" ]; then
+  sleep 60
+  kubectl get nodes
+  kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.2.3/deploy/longhorn.yaml
+  sleep 90
+  kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}' # remove local-path as default provisioner
+  kubectl patch storageclass longhorn -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 fi

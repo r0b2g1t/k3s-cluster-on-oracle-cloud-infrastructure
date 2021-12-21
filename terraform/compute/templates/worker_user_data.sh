@@ -1,6 +1,5 @@
 #!/bin/bash
-if [[ "$USER" =~ "ubuntu" ]]; then
-  apt-get update
+if [[ $(uname -a) =~ "Ubuntu" ]]; then
   wget https://raw.githubusercontent.com/rancher/k3os/master/install.sh
   chmod +x install.sh
 
@@ -21,11 +20,11 @@ k3os:
   sysctls:
     kernel.kptr_restrict: "1"
     kernel.printk: 4 4 1 7
-  token: ${token}
+  token: "${token}"
 ssh_authorized_keys:
 - ${ssh_public_key}
 EOF
-  sudo ./install.sh --takeover --config config.yaml --no-format /dev/sda1 ${k3os_image}
+  ./install.sh --takeover --config config.yaml --no-format /dev/sda1 ${k3os_image}
   sleep 30
-  sudo reboot
+  reboot
 fi

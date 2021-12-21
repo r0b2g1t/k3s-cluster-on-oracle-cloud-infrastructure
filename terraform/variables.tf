@@ -28,3 +28,8 @@ variable "user_ocid" {
   description = "The user OCID."
   type        = string
 }
+
+variable "ssh_authorized_keys" {
+  description = "List of authorized SSH keys"
+  type        = list(any)
+}
