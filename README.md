@@ -49,3 +49,6 @@ Get the storage Longhorn storageclass:
 ```
 kubectl get storageclass
 ```
+
+## To Do's
+- Terraform Loadbalancer deployment
