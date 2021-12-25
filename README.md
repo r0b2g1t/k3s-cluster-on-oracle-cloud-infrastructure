@@ -4,8 +4,9 @@ The motivation of this project is to provide a K3s cluster with four nodes fully
 
 ## Architecture
 The cluster infrastructure based on four nodes, two server- and two agent-nodes for your workload. A load balancer which is distributes the traffic to your nodes on port 443. The server-nodes are at the availability domain 2 (AD-2) and the agent node are created in AD-1. The cluster use the storage solution [Longhorn](https://longhorn.io/), which will use the block storages of the OCI instances and shares the Kubernetes volumes between them. The following diagram give an overview of the infrastructure.
-
-![Cluster Architecture](diagram/k3s_oci.png)
+<p align="center">
+    <img src="diagram/k3s_oci.png" />
+</p>
 
 ## Configuration
 First of all, you need to setup some environment variables which are needed by the OCI Terraform provider.
