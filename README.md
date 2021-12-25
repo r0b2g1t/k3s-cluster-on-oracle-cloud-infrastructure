@@ -52,4 +52,5 @@ kubectl get storageclass
 ```
 
 ## To Do's
-- Terraform Loadbalancer deployment
+- Terraform Load Balancer deployment
+- Automatically certificate creation via Let's Encrypt
