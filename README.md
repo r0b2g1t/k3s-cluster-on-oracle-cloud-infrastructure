@@ -54,3 +54,4 @@ kubectl get storageclass
 ## To Do's
 - Terraform Load Balancer deployment
 - Automatically certificate creation via Let's Encrypt
+- Add screenshots of oci id locations for environment variables
