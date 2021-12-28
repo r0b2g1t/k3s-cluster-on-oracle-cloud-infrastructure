@@ -1,6 +1,6 @@
 resource "oci_core_instance" "server_1" {
   compartment_id      = var.compartment_id
-  availability_domain = data.oci_identity_availability_domain.ad_2.name
+  availability_domain = data.oci_identity_availability_domain.ad_3.name
   display_name        = "k3s-server-1"
   shape               = local.server_instance_config.shape_id
   source_details {
@@ -33,7 +33,7 @@ resource "oci_core_instance" "server_1" {
 
 resource "oci_core_instance" "server_2" {
   compartment_id      = var.compartment_id
-  availability_domain = data.oci_identity_availability_domain.ad_2.name
+  availability_domain = data.oci_identity_availability_domain.ad_3.name
   display_name        = "k3s-server-2"
   shape               = local.server_instance_config.shape_id
   source_details {
