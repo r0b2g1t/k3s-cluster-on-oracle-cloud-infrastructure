@@ -3,7 +3,7 @@
 The motivation of this project is to provide a K3s cluster with four nodes fully automatically, which is composed only of always free infrastructure resources. The deployment will be done Terraform and the user-data scripts which installs K3s automatically and build up the cluster.
 
 ## Architecture
-The cluster infrastructure based on four nodes, two server- and two agent-nodes for your workload. A load balancer which is distributes the traffic to your nodes on port 443. The server-nodes are at the availability domain 2 (AD-2) and the agent node are created in AD-1. The cluster use the storage solution [Longhorn](https://longhorn.io/), which will use the block storages of the OCI instances and shares the Kubernetes volumes between them. The following diagram give an overview of the infrastructure.
+The cluster infrastructure based on four nodes, two server- and two agent-nodes for your workload. A load balancer which is distributes the traffic to your nodes on port 443. The server-nodes are at the availability domain 2 (AD-2) and the agent node are created in AD-1. The cluster use the storage solution [Longhorn](https://longhorn.io), which will use the block storages of the OCI instances and shares the Kubernetes volumes between them. The following diagram give an overview of the infrastructure.
 <p align="center">
     <img src="diagram/k3s_oci.png" />
 </p>
@@ -39,20 +39,37 @@ After a couple minutes the OCI instances are created and the Cluster is up and r
 scp rancher@<SERVER_NODE_1_PUBLIC_IP>:/etc/rancher/k3s/k3s.yaml ~/.kube/config
 ```
 
-Now you can use ```kubectl``` to manange your cluster.
-
-## Checks
-Check the cluster:
+Now you can use ```kubectl``` to manange your cluster and check the cluster nodes:
 ```
 kubectl get nodes
 ```
-Get the storage Longhorn storageclass:
+
+## Longhorn Installation
+Finaly, you have to deploy [Longhorn](https://longhorn.io) the distibuted block storage by the following commands:
+
+```
+kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.2.3/deploy/longhorn.yaml
+```
+
+Remove local-path as default provisioner and set Longhorn as default:
+``` 
+kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+kubectl patch storageclass longhorn -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+```
+
+Check the Longhorn ```storageclass```:
 ```
 kubectl get storageclass
 ```
 
+After a some minutes all pods are in the running state and you can connect to the Longhorn UI by forwarding the port to your machine:
+```
+kubectl port-forward deployment/longhorn-ui 8000:8000 -n longhorn-system
+```
+
+Use this URL to access the interface: ```http://127.0.0.1:8000``` .
+
 ## To Do's
-- Cloud-init in k3os for Longhorn
 - Terraform Load Balancer deployment
 - Automatically certificate creation via Let's Encrypt
 - Add screenshots of oci id locations for environment variables

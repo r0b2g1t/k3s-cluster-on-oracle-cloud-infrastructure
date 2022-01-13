@@ -55,14 +55,3 @@ EOF
   ./install.sh --takeover --config config.yaml --no-format /dev/sda1 ${k3os_image}
   reboot
 fi
-
-DIR="/etc/rancher/"
-
-if [ -d "$DIR" ] && [ "$HOSTNAME" == "k3s-server-1" ]; then
-  sleep 60
-  kubectl get nodes
-  kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.2.3/deploy/longhorn.yaml
-  sleep 90
-  kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}' # remove local-path as default provisioner
-  kubectl patch storageclass longhorn -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
-fi
