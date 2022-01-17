@@ -9,7 +9,7 @@ The cluster infrastructure based on four nodes, two server- and two agent-nodes 
 </p>
 
 ## Configuration
-First of all, you need to setup some environment variables which are needed by the OCI Terraform provider.
+First of all, you need to setup some environment variables which are needed by the OCI Terraform provider. The [Oracle Cloud Infrastructure documentation](https://docs.oracle.com/en-us/iaas/developer-tutorials/tutorials/tf-provider/01-summary.htm) gives a good overview of where the IDs and information are located and also explains how to set up Terraform. 
 ```
 export TF_VAR_compartment_id="<COMPARTMENT_ID>"
 export TF_VAR_region="<REGION_NAME>"
@@ -72,4 +72,3 @@ Use this URL to access the interface: ```http://127.0.0.1:8000``` .
 ## To Do's
 - Terraform Load Balancer deployment
 - Automatically certificate creation via Let's Encrypt
-- Add screenshots of oci id locations for environment variables
