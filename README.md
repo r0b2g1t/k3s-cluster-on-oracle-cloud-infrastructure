@@ -114,7 +114,7 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: mysite-nginx-service
+          serviceName: <service-name>                    # replace
           servicePort: 80
   tls:
   - hosts:
