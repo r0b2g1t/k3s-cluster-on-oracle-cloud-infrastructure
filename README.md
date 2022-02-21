@@ -126,4 +126,3 @@ spec:
 The last step needs to be done for every service. In this deployment step the cert-manager will handle the communication to Let's Encrypt and add the certificate to your service ingress resource.
 ## To Do's
 - Terraform Load Balancer deployment
-- Automatically certificate creation via Let's Encrypt
