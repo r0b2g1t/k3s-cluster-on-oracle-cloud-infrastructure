@@ -1,4 +1,4 @@
-#  Free K3s Cluster the Oracle Cloud Infrastructure
+# Free K3s Cluster on the Oracle Cloud Infrastructure
 
 The motivation of this project is to provide a K3s cluster with four nodes fully automatically, which is composed only of always free infrastructure resources. The deployment will be done Terraform and the user-data scripts which installs K3s automatically and build up the cluster.
 
