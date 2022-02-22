@@ -39,7 +39,7 @@ After a couple minutes the OCI instances are created and the Cluster is up and r
 scp rancher@<SERVER_NODE_1_PUBLIC_IP>:/etc/rancher/k3s/k3s.yaml ~/.kube/config
 ```
 
-Now you can use ```kubectl``` to manange your cluster and check the cluster nodes:
+Now you can use ```kubectl``` to manage your cluster and check the nodes:
 ```
 kubectl get nodes
 ```
