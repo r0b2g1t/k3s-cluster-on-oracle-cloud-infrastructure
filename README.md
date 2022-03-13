@@ -1,4 +1,4 @@
-#  Free K3s Cluster the Oracle Cloud Infrastructure
+# Free K3s Cluster on the Oracle Cloud Infrastructure
 
 The motivation of this project is to provide a K3s cluster with four nodes fully automatically, which is composed only of always free infrastructure resources. The deployment will be done Terraform and the user-data scripts which installs K3s automatically and build up the cluster.
 
@@ -39,7 +39,7 @@ After a couple minutes the OCI instances are created and the Cluster is up and r
 scp rancher@<SERVER_NODE_1_PUBLIC_IP>:/etc/rancher/k3s/k3s.yaml ~/.kube/config
 ```
 
-Now you can use ```kubectl``` to manange your cluster and check the cluster nodes:
+Now you can use ```kubectl``` to manage your cluster and check the nodes:
 ```
 kubectl get nodes
 ```
