@@ -6,3 +6,8 @@
 *.hcl
 *.info
 *.tfstate.backup
+.auto.tfvars
+shared_credentials_file
+!.tflint.hcl
+k3s.yaml
+k3s_fixed.yaml

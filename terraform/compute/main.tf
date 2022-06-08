@@ -25,7 +25,10 @@ resource "oci_core_instance" "server_1" {
           host_name      = "k3s-server-1",
           ssh_public_key = var.ssh_authorized_keys[0],
           token          = random_string.cluster_token.result,
-          k3os_image     = local.server_instance_config.k3os_image
+          email_address  = var.email_address,
+          k3s_version    = var.k3s_version,
+          nlb_private_ip = var.nlb_private_ip,
+          nlb_public_ip  = var.nlb_public_ip
       })
     )
   }
@@ -47,6 +50,7 @@ resource "oci_core_instance" "worker" {
   }
   create_vnic_details {
     subnet_id = var.cluster_subnet_id
+    private_ip = "10.0.0.2${count.index +1}"
     nsg_ids   = [var.permit_rules_nsg_id]
   }
   metadata = {
@@ -58,13 +62,16 @@ resource "oci_core_instance" "worker" {
           host_name      = "k3s-worker-${count.index + 1}",
           ssh_public_key = var.ssh_authorized_keys[0],
           token          = random_string.cluster_token.result,
-          k3os_image     = local.worker_instance_config.k3os_image
+          email_address  = var.email_address,
+          k3s_version    = var.k3s_version,
+          nlb_private_ip = var.nlb_private_ip,
+          nlb_public_ip  = var.nlb_public_ip
     }))
   }
   depends_on = [oci_core_instance.server_1]
 }
 resource "oci_core_instance" "worker2" {
-  count               = 2
+  count               = 1
   compartment_id      = var.compartment_id
   availability_domain = data.oci_identity_availability_domain.ad_1.name
   display_name        = "k3s-worker-${count.index + 3}"
@@ -79,6 +86,7 @@ resource "oci_core_instance" "worker2" {
   }
   create_vnic_details {
     subnet_id = var.cluster_subnet_id
+    private_ip = "10.0.0.2${count.index +3}"
     nsg_ids   = [var.permit_rules_nsg_id]
   }
   metadata = {
@@ -90,7 +98,10 @@ resource "oci_core_instance" "worker2" {
           host_name      = "k3s-worker-${count.index + 3}",
           ssh_public_key = var.ssh_authorized_keys[0],
           token          = random_string.cluster_token.result,
-          k3os_image     = local.worker_instance_config2.k3os_image
+          email_address  = var.email_address,
+          k3s_version    = var.k3s_version,
+          nlb_private_ip = var.nlb_private_ip,
+          nlb_public_ip  = var.nlb_public_ip
     }))
   }
   depends_on = [oci_core_instance.server_1]

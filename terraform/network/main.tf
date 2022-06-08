@@ -91,8 +91,22 @@ resource "oci_core_network_security_group_security_rule" "permit_https" {
   source_type               = "CIDR_BLOCK"
   tcp_options {
     destination_port_range {
-      max = 80
-      min = 80
+      max = 443
+      min = 443
+    }
+  }
+  direction = "INGRESS"
+}
+
+resource "oci_core_network_security_group_security_rule" "permit_k8s_api" {
+  network_security_group_id = oci_core_network_security_group.permit_rules.id
+  protocol                  = "6" // TCP
+  source                    = "0.0.0.0/0"
+  source_type               = "CIDR_BLOCK"
+  tcp_options {
+    destination_port_range {
+      max = 6443
+      min = 6443
     }
   }
   direction = "INGRESS"

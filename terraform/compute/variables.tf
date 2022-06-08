@@ -23,31 +23,9 @@ variable "ssh_authorized_keys" {
   type        = list(any)
 }
 
-variable "master_1_user_data" {
-  description = "Commands to be ran at boot for the bastion instance. Default installs Kali headless"
-  type        = string
-  default     = <<EOT
-#!/bin/sh
-sudo apt-get update
-EOT
-}
-
-variable "master_2_user_data" {
-  description = "Commands to be ran at boot for the bastion instance. Default installs Kali headless"
-  type        = string
-  default     = <<EOT
-#!/bin/sh
-sudo apt-get update
-EOT
-}
-
-variable "worker_user_data" {
-  description = "Commands to be ran at boot for the bastion instance. Default installs Kali headless"
-  type        = string
-  default     = <<EOT
-#!/bin/sh
-sudo apt-get update
-EOT
+variable k3s_version {
+  description = "K3s version to be installed"
+  default     = "v1.21.12+k3s1"
 }
 
 locals {
@@ -55,13 +33,10 @@ locals {
     shape_id = "VM.Standard.A1.Flex"
     ocpus    = 2
     ram      = 12
-    // Canonical-Ubuntu-20.04-aarch64-2021.12.01-0
+    // Canonical-Ubuntu-20.04-aarch64
     source_id   = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaaaqkzlefkuyvhie3t3tmsaavfvvj3i6vcywkbftrnl3bmvtcjuw7a"
     source_type = "image"
-    server_ip_1 = "10.0.0.11"
-    server_ip_2 = "10.0.0.12"
-    // release: v0.21.5-k3s2r1
-    k3os_image = "https://github.com/rancher/k3os/releases/download/v0.21.5-k3s2r1/k3os-arm64.iso"
+    server_ip_1 = "10.0.0.20"
     metadata = {
       "ssh_authorized_keys" = join("\n", var.ssh_authorized_keys)
     }
@@ -70,30 +45,36 @@ locals {
     shape_id = "VM.Standard.E2.1.Micro"
     ocpus    = 1
     ram      = 1
-    // Canonical-Ubuntu-20.04-aarch64-2021.12.01-0
+    // Canonical-Ubuntu-20.04-amd64
     source_id   = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaagplxd7wojwcfx4dhtbrujrfni2u5yvrkpfvatnwneohdloeyihva"
     source_type = "image"
-    worker_ip_0 = "10.0.0.21"
-    worker_ip_1 = "10.0.0.22"
-    // release: v0.21.5-k3s2r1
-    k3os_image = "https://github.com/rancher/k3os/releases/download/v0.21.5-k3s2r1/k3os-amd64.iso"
     metadata = {
       "ssh_authorized_keys" = join("\n", var.ssh_authorized_keys)
     }
   }
   worker_instance_config2 = {
     shape_id = "VM.Standard.A1.Flex"
-    ocpus    = 1
-    ram      = 4
-    // Canonical-Ubuntu-20.04-aarch64-2021.12.01-0
+    ocpus    = 2
+    ram      = 12
+    // Canonical-Ubuntu-20.04-aarch64
     source_id   = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaaaqkzlefkuyvhie3t3tmsaavfvvj3i6vcywkbftrnl3bmvtcjuw7a"
     source_type = "image"
-    worker_ip_0 = "10.0.0.23"
-    worker_ip_1 = "10.0.0.24"
-    // release: v0.21.5-k3s2r1
-    k3os_image = "https://github.com/rancher/k3os/releases/download/v0.21.5-k3s2r1/k3os-arm64.iso"
     metadata = {
       "ssh_authorized_keys" = join("\n", var.ssh_authorized_keys)
     }
   }
+}
+
+variable "email_address" {
+  description = "Email address for CertManager"
+  type = string
+}
+
+variable "nlb_public_ip" {
+  description = "NLB IP"
+  type        = string
+}
+variable "nlb_private_ip" {
+  description = "NLB IP"
+  type        = string
 }
