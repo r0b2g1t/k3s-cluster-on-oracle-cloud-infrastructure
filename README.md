@@ -8,29 +8,37 @@ The cluster infrastructure based on four nodes, one control-plane and three work
     <img src="diagram/k3s_oci.png" />
 </p>
 
+## Prerequisites
+
+First create an [Oracle Cloud Infrastructure account](https://signup.oraclecloud.com/)
+Wait about 12-24h before your account is fully initialized
+Next download [terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli) and [kubectl](https://kubernetes.io/docs/tasks/tools/)
+Create an OCI Customer Secret Key.
+
+
 ## Configuration
 First of all, you need to setup some environment variables which are needed by the OCI Terraform provider. The [Oracle Cloud Infrastructure documentation](https://docs.oracle.com/en-us/iaas/developer-tutorials/tutorials/tf-provider/01-summary.htm) gives a good overview of where the IDs and information are located and also explains how to set up Terraform. For state storage please refer to this guide: https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformUsingObjectStore.htm. Prereq folder should be able to setup the bucket. You only need to create the shared_credentails_file with Customer Secret Keys.
 ```
-export TF_VAR_compartment_id="<COMPARTMENT_ID>"
-export TF_VAR_region="<REGION_NAME>"
-export TF_VAR_tenancy_ocid="<TENANCY_OICD>"
-export TF_VAR_user_ocid="<USER_OICD>"
-export TF_VAR_fingerprint="<RSA_FINGERPRINT>"
-export TF_VAR_private_key_path="<PATH_TO_YOUR_PRIVATE_KEY>"
-export TF_VAR_ssh_authorized_keys='["<SSH_PUBLIC_KEY>"]'
-export TF_VAR_bucket="<BUCKET>"
-export TF_VAR_email_address="<EMAIL_ADDRESS>"
+export compartment_id="<COMPARTMENT_ID>"
+export region="<REGION_NAME>"
+export tenancy_ocid="<TENANCY_OICD>"
+export user_ocid="<USER_OICD>"
+export fingerprint="<RSA_FINGERPRINT>"
+export private_key_path="<PATH_TO_YOUR_PRIVATE_KEY>"
+export ssh_authorized_keys='["<SSH_PUBLIC_KEY>"]'
+export bucket="<BUCKET>"
+export email_address="<EMAIL_ADDRESS>"
 
 cat > terraform/.auto.tfvars <<EOF
-compartment_id
-region
-tenancy_ocid
-user_ocid
-bucket
-fingerprint
-ssh_authorized_keys
-private_key_path
-email_address
+compartment_id = ${compartment_id}
+region = ${region}
+tenancy_ocid = ${tenancy_ocid}
+user_ocid = ${user_ocid}
+bucket = ${bucket}
+fingerprint = ${fingerprint}
+ssh_authorized_keys = ${ssh_authorized_keys}
+private_key_path = ${private_key_path}
+email_address = ${email_address}
 EOF
 cp terraform/.auto.tfvars prereq/.auth.tfvars
 ```
@@ -209,7 +217,7 @@ spec:
       main:
         # -- Enables or disables the ingress
         enabled: true
-        ingressClassName: "traefik"
+        ingressClassName: "nginx"
         annotations:
           # cert-manager.io/cluster-issuer: letsencrypt-prod
         hosts:
@@ -233,5 +241,8 @@ curl -sk https://nullserv.1.1.1.1.nip.io -w "%{http_code}"
 ```
 
 The last step needs to be done for every service. In this deployment step the cert-manager will handle the communication to Let's Encrypt and add the certificate to your service ingress resource.
-## To Do's
-- Better example app.
+
+## Demo resources
+
+- [system-upgrade](./demo/system-upgrade.md)
+- [application](./demo/application.md)

@@ -34,7 +34,7 @@ EOF
 
   curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server" INSTALL_K3S_VERSION=${k3s_version} sh -
 fi
-cat > /var/lib/rancher/k3s/server/manifests/00-nullserv-helmchart.yaml <<EOF
+cat > /var/lib/rancher/k3s/server/manifests/00-ingress-nginx-helmchart.yaml <<EOF
 ---
 apiVersion: v1
 kind: Namespace
@@ -62,7 +62,7 @@ cat > /var/lib/rancher/k3s/server/manifests/01-cert-manager-helmchart.yaml <<EOF
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: cert-maanger
+  name: cert-manager
 ---
 apiVersion: helm.cattle.io/v1
 kind: HelmChart
