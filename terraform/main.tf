@@ -29,6 +29,6 @@ module "compute" {
   compartment_id      = var.compartment_id
   tenancy_ocid        = var.tenancy_ocid
   cluster_subnet_id   = module.network.cluster_subnet.id
-  permit_ssh_nsg_id   = module.network.permit_ssh.id
+  permit_rules_nsg_id   = module.network.permit_rules.id
   ssh_authorized_keys = var.ssh_authorized_keys
 }

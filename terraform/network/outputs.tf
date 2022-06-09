@@ -9,9 +9,9 @@ output "cluster_subnet" {
   depends_on  = [oci_core_subnet.cluster_subnet]
 }
 
-output "permit_ssh" {
+output "permit_rules" {
   description = "NSG to permit ssh"
-  value       = oci_core_network_security_group.permit_ssh
+  value       = oci_core_network_security_group.permit_rules
 }
 
 output "ad" {
