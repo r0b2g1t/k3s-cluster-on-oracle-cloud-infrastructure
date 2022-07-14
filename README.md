@@ -40,7 +40,7 @@ ssh_authorized_keys = ${ssh_authorized_keys}
 private_key_path = ${private_key_path}
 email_address = ${email_address}
 EOF
-cp terraform/.auto.tfvars prereq/.auth.tfvars
+cp terraform/.auto.tfvars prereq/.auto.tfvars
 ```
 
 ## Deployment
