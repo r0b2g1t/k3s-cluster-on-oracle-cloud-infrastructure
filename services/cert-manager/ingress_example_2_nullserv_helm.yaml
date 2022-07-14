@@ -1,0 +1,30 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: nullserv
+  namespace: default
+spec:
+  repo: https://k8s-at-home.com/charts/
+  chart: nullserv
+  set:
+    global.systemDefaultRegistry: ""
+  valuesContent: |-
+    ingress:
+      main:
+        # -- Enables or disables the ingress
+        enabled: true
+        ingressClassName: "traefik"
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt-prod
+        hosts:
+          -  # -- Host address. Helm template can be passed.
+            host: nullserv.130.61.139.137.nip.io
+            paths:
+              -  # -- Path.  Helm template can be passed.
+                path: /
+                # -- Ignored if not kubeVersion >= 1.14-0
+                pathType: Prefix
+        tls:
+          - hosts:
+              - nullserv.130.61.139.137.nip.io
+            secretName: nullserv-tls
