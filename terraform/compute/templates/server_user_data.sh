@@ -1,4 +1,10 @@
 #!/bin/bash
+rm -rf /etc/resolv.conf
+cat > /etc/resolv.conf <<EOF
+nameserver 1.1.1.2
+nameserver 1.0.0.2
+EOF
+systemctl disable --now systemd-resolved
 
 if [[ $(uname -a) =~ "Ubuntu" ]]; then
   iptables -F
@@ -16,6 +22,7 @@ disable:
 tls-san:
   - "api.${nlb_public_ip}.nip.io"
   - "api.${nlb_private_ip}.nip.io"
+  - "api.${custom_domain}"
 EOF
   elif [[ "$HOSTNAME" =~ "k3s-server-2" ]]; then
       cat > /etc/rancher/k3s/config.yaml <<EOF
@@ -28,7 +35,7 @@ disable:
 tls-san:
   - "api.${nlb_public_ip}.nip.io"
   - "api.${nlb_private_ip}.nip.io"
-
+  - "api.${custom_domain}"
 EOF
   fi;
 
@@ -78,7 +85,7 @@ spec:
   valuesContent: |-
     installCRDs: true
 EOF
-cat > /var/lib/rancher/k3s/server/manifests/02-cert-manager-issuer.yaml <<EOF
+cat > /var/lib/rancher/k3s/server/manifests/02-cert-manager-staging-issuer.yaml <<EOF
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -93,6 +100,27 @@ spec:
     privateKeySecretRef:
       # Secret resource that will be used to store the account's private key.
       name: letsencrypt-staging-key
+    # Add a single challenge solver, HTTP01 using nginx
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+EOF
+cat > /var/lib/rancher/k3s/server/manifests/02-cert-manager-prod-http-issuer.yaml <<EOF
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod-http
+spec:
+  acme:
+    # You must replace this email address with your own.
+    # Let's Encrypt will use this to contact you about expiring
+    # certificates, and issues related to your account.
+    email: ${email_address}
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      # Secret resource that will be used to store the account's private key.
+      name: letsencrypt-prod-key
     # Add a single challenge solver, HTTP01 using nginx
     solvers:
     - http01:

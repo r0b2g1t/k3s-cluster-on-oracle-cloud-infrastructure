@@ -18,7 +18,8 @@ Create an OCI Customer Secret Key.
 
 ## Configuration
 First of all, you need to setup some environment variables which are needed by the OCI Terraform provider. The [Oracle Cloud Infrastructure documentation](https://docs.oracle.com/en-us/iaas/developer-tutorials/tutorials/tf-provider/01-summary.htm) gives a good overview of where the IDs and information are located and also explains how to set up Terraform. For state storage please refer to this guide: https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformUsingObjectStore.htm. Prereq folder should be able to setup the bucket. You only need to create the shared_credentails_file with Customer Secret Keys.
-```
+
+```bash
 export compartment_id="<COMPARTMENT_ID>"
 export region="<REGION_NAME>"
 export tenancy_ocid="<TENANCY_OICD>"
@@ -45,33 +46,51 @@ cp terraform/.auto.tfvars prereq/.auto.tfvars
 
 ## Deployment
 The deployment is a straight forwards process. First, start with a Terraform prereq init:
-```
+
+```bash
 cd prereq
 terraform init
 ```
+
 Second, you have to create a Terraform plan by this command:
-```
+
+```bash
 terraform plan -out .tfplan
 ```
+
 And last apply the plan:
-```
+
+```bash
 terraform apply ".tfplan"
 ```
+
 These commands created the OCI Bucket to store statefile for the cluster.
 
-```
+```bash
 cd terraform
 terraform init
 terraform plan
 ```
 
 After a couple minutes the OCI instances are created and the Cluster is up and running. And are able to connect via SSH to your Server-node-1 to get the kube-config.
-```
+
+```bash
 export KUBECONFIG=${pwd}/k3s_fixed.yaml
 ```
 
-Now you can use ```kubectl``` to manage your cluster and check the nodes:
+or if you want to merge your default config:
+
+```bash
+cp ~/.kube/config{,.bak}
+KUBECONFIG=~/.kube/config:${pwd}/k3s_fixed.yaml kubectl config view --flatten > ~/.kube/config
+kubectl use-context default
+kubectl cluster-info
 ```
+
+
+Now you can use ```kubectl``` to manage your cluster and check the nodes:
+
+```bash
 kubectl get nodes
 ```
 
@@ -79,19 +98,23 @@ kubectl get nodes
 Finally, you have to deploy [Longhorn](https://longhorn.io) the distributed block storage by the following commands of the ```kubectl``` or ```helm``` method:
 
 Method 1 by ```kubectl```:
-```
+
+```bash
 kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.2.3/deploy/longhorn.yaml
 ```
 
 Method 2 by ```helm```:
 You can find a shell script with all commands in the ```services``` folder which run all the following commands at once.
+
 ```bash
 helm repo add longhorn https://charts.longhorn.io
 helm repo update
 kubectl create namespace longhorn-system
 helm install longhorn longhorn/longhorn --namespace longhorn-system
 ```
+
 Method 3 by k3s [helm-controller](https://rancher.com/docs/k3s/latest/en/helm/)
+
 ```yaml
 ---
 apiVersion: v1
@@ -114,17 +137,20 @@ spec:
 ```
 
 Additionally, for both methods you have to remove local-path as default provisioner and set Longhorn as default:
+
 ```bash
 kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
 kubectl patch storageclass longhorn -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 ```
 
 Check the Longhorn ```storageclass```:
+
 ```bash
 kubectl get storageclass
 ```
 
 After a some minutes all pods are in the running state and you can connect to the Longhorn UI by forwarding the port to your machine:
+
 ```bash
 kubectl port-forward deployment/longhorn-ui 8000:8000 -n longhorn-system
 ```
@@ -137,6 +163,7 @@ This is already preinstalled with letsencrypt-staging clusterissuer.
 For propagating your services, it is strongly recommended to use SSL encryption. In this case you have to deploy certificates for all of your services which should be reachable at the internet. To fulfill this requirement you can use the [```cert-manager```](https://cert-manager.io/) deployment in the ```services\cert-manager``` folder.
 
 First, you have to execute the ```cert-manager.sh``` or the following commands:
+
 ```bash
 helm repo add jetstack https://charts.jetstack.io
 helm repo update
@@ -148,7 +175,9 @@ helm install \
   --version v1.7.1 \
   --set installCRDs=true
 ```
+
 OR
+
 ```yaml
 ---
 apiVersion: v1
@@ -173,6 +202,7 @@ spec:
 ```
 
 Second, add a cluster issuer by editing and deploy ```cluster_issuer.yaml```file by replacing it with your email address  and your domain:
+
 ```yaml
 ...
 spec:
@@ -182,6 +212,7 @@ spec:
 ```
 
 Finally, when you deploy a service you have to add an ingress resource. You can use the example file ```ingress_example.yaml``` and edit it for your service:
+
 ```yaml
 ...
 spec:
@@ -201,6 +232,7 @@ spec:
 ```
 
 If you want you could try out with this simple page which responds http200 always:
+
 ```yaml
 apiVersion: helm.cattle.io/v1
 kind: HelmChart
@@ -236,6 +268,7 @@ spec:
 ```
 
 Test it out in moments with:
+
 ```bash
 curl -sk https://nullserv.1.1.1.1.nip.io -w "%{http_code}"
 ```

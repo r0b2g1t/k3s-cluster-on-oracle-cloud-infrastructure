@@ -43,3 +43,7 @@ variable "email_address" {
   description = "Email address for CertManager"
   type = string
 }
+variable "custom_domain" {
+  description = "custom domain for access"
+  type        = string
+}

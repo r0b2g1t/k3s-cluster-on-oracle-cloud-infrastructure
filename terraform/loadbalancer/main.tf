@@ -22,7 +22,7 @@ resource "oci_network_load_balancer_backend_set" "test_nlb_backend_set_http" {
 }
 
 resource "oci_network_load_balancer_backend" "test_nlb_backend_http" {
-    count = 4
+    count = 3
     backend_set_name = oci_network_load_balancer_backend_set.test_nlb_backend_set_http.name
     network_load_balancer_id = oci_network_load_balancer_network_load_balancer.test_network_load_balancer.id
     port = "80"
@@ -44,7 +44,7 @@ resource "oci_network_load_balancer_backend_set" "test_nlb_backend_set_https" {
 }
 
 resource "oci_network_load_balancer_backend" "test_nlb_backend_https" {
-    count = 4
+    count = 3
     backend_set_name = oci_network_load_balancer_backend_set.test_nlb_backend_set_https.name
     network_load_balancer_id = oci_network_load_balancer_network_load_balancer.test_network_load_balancer.id
     port = 443

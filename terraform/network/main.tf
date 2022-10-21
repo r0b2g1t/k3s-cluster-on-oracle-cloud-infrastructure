@@ -40,6 +40,9 @@ resource "oci_core_default_route_table" "internet_route_table" {
     destination       = "0.0.0.0/0"
     destination_type  = "CIDR_BLOCK"
   }
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 resource "oci_core_subnet" "cluster_subnet" {

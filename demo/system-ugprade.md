@@ -154,7 +154,7 @@ spec:
     - key: plan.upgrade.cattle.io/focal
       operator: Exists
   secrets:
-  - name: impish
+  - name: focal
     path: /host/run/system-upgrade/secrets/focal
   serviceAccountName: system-upgrade
   upgrade:

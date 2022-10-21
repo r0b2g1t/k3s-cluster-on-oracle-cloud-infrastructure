@@ -25,7 +25,7 @@ variable "ssh_authorized_keys" {
 
 variable k3s_version {
   description = "K3s version to be installed"
-  default     = "v1.21.12+k3s1"
+  default     = "v1.23.12+k3s1"
 }
 
 locals {
@@ -54,8 +54,8 @@ locals {
   }
   worker_instance_config2 = {
     shape_id = "VM.Standard.A1.Flex"
-    ocpus    = 2
-    ram      = 12
+    ocpus    = 1
+    ram      = 6
     // Canonical-Ubuntu-20.04-aarch64
     source_id   = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaaaqkzlefkuyvhie3t3tmsaavfvvj3i6vcywkbftrnl3bmvtcjuw7a"
     source_type = "image"
@@ -76,5 +76,9 @@ variable "nlb_public_ip" {
 }
 variable "nlb_private_ip" {
   description = "NLB IP"
+  type        = string
+}
+variable "custom_domain" {
+  description = "custom domain for access"
   type        = string
 }
