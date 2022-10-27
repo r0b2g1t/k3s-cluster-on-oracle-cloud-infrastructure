@@ -7,5 +7,5 @@ output "cluster_token" {
 }
 
 output "server_1_public_ip" {
-  value = oci_core_instance.server_1.public_ip
+  value = oci_core_instance.server.public_ip
 }

@@ -34,16 +34,31 @@ variable "ssh_authorized_keys" {
   type        = list(any)
 }
 
-variable "bucket" {
-  description = "Name of the Object Store bucket for tfstate"
-  type        = string
-}
-
 variable "email_address" {
   description = "Email address for CertManager"
   type = string
 }
 variable "custom_domain" {
   description = "custom domain for access"
+  type        = string
+}
+
+variable "oci_bucket" {
+  description = "Name of the Object Store bucket for K3s backup"
+  type        = string
+}
+
+variable "oci_bucket_folder" {
+  description = "Name of the Object Store bucket for K3s backup"
+  type        = string
+}
+
+variable "oci_bucket_ak" {
+  description = "OCI Access Key for S3"
+  type        = string
+}
+
+variable "oci_bucket_sk" {
+  description = "OCI Secret Key for S3"
   type        = string
 }

@@ -1,19 +1,31 @@
 #!/bin/bash
+apt update -y
+apt upgrade -y
+apt install vim
 rm -rf /etc/resolv.conf
 cat > /etc/resolv.conf <<EOF
 nameserver 1.1.1.2
 nameserver 1.0.0.2
 EOF
+
 systemctl disable --now systemd-resolved
+
+cat >> /etc/hosts <<EOF
+10.0.0.20 k3s-server-1
+10.0.0.22 k3s-worker-1
+10.0.0.23 k3s-worker-2
+EOF
 
 if [[ $(uname -a) =~ "Ubuntu" ]]; then
   iptables -F
   netfilter-persistent save
-  mkdir -p /etc/rancher/k3s
-  mkdir -p /var/lib/rancher/k3s/server/manifests
-  if [[ "$HOSTNAME" =~ "k3s-server-1" ]]; then
 
-      cat > /etc/rancher/k3s/config.yaml <<EOF
+fi;
+
+mkdir -p /etc/rancher/k3s
+mkdir -p /var/lib/rancher/k3s/server/manifests
+
+cat > /etc/rancher/k3s/config.yaml <<EOF
 write-kubeconfig-mode: "0644"
 token: "${token}"
 disable:
@@ -23,24 +35,16 @@ tls-san:
   - "api.${nlb_public_ip}.nip.io"
   - "api.${nlb_private_ip}.nip.io"
   - "api.${custom_domain}"
+etcd-snapshot-schedule-cron: "10 */4 * * *"
+etcd-s3: true
+etcd-s3-endpoint: ${oci_bucket_namespace}.compat.objectstorage.eu-frankfurt-1.oraclecloud.com
+etcd-s3-access-key: "${oci_bucket_ak}"
+etcd-s3-secret-key: "${oci_bucket_sk}"
+etcd-s3-bucket: "${oci_bucket}"
+etcd-s3-folder: "${oci_bucket_folder}"
 EOF
-  elif [[ "$HOSTNAME" =~ "k3s-server-2" ]]; then
-      cat > /etc/rancher/k3s/config.yaml <<EOF
-write-kubeconfig-mode: "0644"
-token: "${token}"
-server: https://${nlb_private_ip}:6443
-disable:
-  - traefik
-  - servicelb
-tls-san:
-  - "api.${nlb_public_ip}.nip.io"
-  - "api.${nlb_private_ip}.nip.io"
-  - "api.${custom_domain}"
-EOF
-  fi;
 
-  curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server" INSTALL_K3S_VERSION=${k3s_version} sh -
-fi
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --cluster-init" INSTALL_K3S_VERSION=${k3s_version} sh -
 cat > /var/lib/rancher/k3s/server/manifests/00-ingress-nginx-helmchart.yaml <<EOF
 ---
 apiVersion: v1
@@ -60,6 +64,7 @@ spec:
     global.systemDefaultRegistry: ""
   valuesContent: |-
     controller:
+      kind: DaemonSet
       ingressClassResource:
         default: true
       hostNetwork: true

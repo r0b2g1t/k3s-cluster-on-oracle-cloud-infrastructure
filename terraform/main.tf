@@ -59,6 +59,10 @@ module "compute" {
   custom_domain       = var.custom_domain
   nlb_public_ip       = module.loadbalancer.nlb_public_ip
   nlb_private_ip      = module.loadbalancer.nlb_private_ip
+  oci_bucket          = var.oci_bucket
+  oci_bucket_folder   = var.oci_bucket_folder
+  oci_bucket_ak       = var.oci_bucket_ak
+  oci_bucket_sk       = var.oci_bucket_sk
 }
 
 module "fetch_config" {
