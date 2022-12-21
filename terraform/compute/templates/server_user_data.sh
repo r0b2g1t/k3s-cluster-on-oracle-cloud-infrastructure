@@ -18,8 +18,8 @@ k3os:
   - kvm
   - nvme
   ntp_servers:
-  - 0.de.pool.ntp.org
-  - 1.de.pool.ntp.org
+  - 0.pool.ntp.org
+  - 1.pool.ntp.org
   sysctls:
     kernel.kptr_restrict: "1"
     kernel.printk: 4 4 1 7
