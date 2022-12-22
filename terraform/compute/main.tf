@@ -59,7 +59,7 @@ resource "oci_core_instance" "server_1" {
   depends_on = [oci_core_instance.server_0]
 }
 
-resource "oci_core_instance" "server_2+" {
+resource "oci_core_instance" "server_2_3" {
   count               = 2
   compartment_id      = var.compartment_id
   availability_domain = data.oci_identity_availability_domain.ad_1.name
