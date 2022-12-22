@@ -20,6 +20,9 @@ module "network" {
 
   compartment_id = var.compartment_id
   tenancy_ocid   = var.tenancy_ocid
+
+  cidr_blocks = local.cidr_blocks
+  ssh_managemnet_network = local.ssh_managemnet_network
 }
 
 module "compute" {

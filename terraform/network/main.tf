@@ -1,9 +1,8 @@
 resource "oci_core_vcn" "cluster_network" {
   compartment_id = var.compartment_id
 
-  cidr_blocks = [
-    "10.0.0.0/24"
-  ]
+  cidr_blocks = var.cidr_blocks
+
   display_name = "cluster-vcn"
   dns_label    = "internal"
 }
@@ -21,7 +20,7 @@ resource "oci_core_default_security_list" "default_list" {
   ingress_security_rules {
     protocol    = "all"
     description = "Allow inter-subnet traffic"
-    source      = "10.0.0.0/24"
+    source      = var.cidr_blocks[0]
   }
 }
 
@@ -59,7 +58,7 @@ resource "oci_core_network_security_group" "permit_ssh" {
 resource "oci_core_network_security_group_security_rule" "permit_ssh" {
   network_security_group_id = oci_core_network_security_group.permit_ssh.id
   protocol                  = "6" // TCP
-  source                    = "0.0.0.0/0"
+  source                    = var.ssh_managemnet_network
   source_type               = "CIDR_BLOCK"
   tcp_options {
     destination_port_range {
