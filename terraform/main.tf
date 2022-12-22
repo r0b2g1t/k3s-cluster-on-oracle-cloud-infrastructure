@@ -34,4 +34,6 @@ module "compute" {
   cluster_subnet_id   = module.network.cluster_subnet.id
   permit_ssh_nsg_id   = module.network.permit_ssh.id
   ssh_authorized_keys = var.ssh_authorized_keys
+
+  cidr_blocks = local.cidr_blocks
 }
