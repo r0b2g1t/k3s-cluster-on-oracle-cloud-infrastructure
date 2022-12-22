@@ -83,7 +83,7 @@ resource "oci_core_instance" "server_2_3" {
     "user_data" = base64encode(
       templatefile("${path.module}/templates/server.sh",
         {
-          server_0_ip    = local.ampere_instance_config.server_ip_0,
+          server_0_ip    = oci_core_instance.server_0.private_ip,
           token          = random_string.cluster_token.result,
     }))
   }
