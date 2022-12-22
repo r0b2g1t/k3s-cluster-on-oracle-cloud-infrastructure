@@ -49,21 +49,21 @@ resource "oci_core_instance" "server_1" {
   metadata = {
     "ssh_authorized_keys" = local.ampere_instance_config.metadata.ssh_authorized_keys
     "user_data" = base64encode(
-      templatefile("${path.module}/templates/server_user_data.sh",
+      templatefile("${path.module}/templates/server.sh",
         {
           server_0_ip    = oci_core_instance.server_0.private_ip,
           token          = random_string.cluster_token.result
       })
     )
   }
-  depends_on = [oci_core_instance.server_1]
+  depends_on = [oci_core_instance.server_0]
 }
 
 resource "oci_core_instance" "server_2+" {
   count               = 2
   compartment_id      = var.compartment_id
   availability_domain = data.oci_identity_availability_domain.ad_1.name
-  display_name        = "k3s_server_${count.index + 1}"
+  display_name        = "k3s_server_${count.index + 2}"
   shape               = local.micro_instance_config.shape_id
   source_details {
     source_id   = local.micro_instance_config.source_id
@@ -81,11 +81,11 @@ resource "oci_core_instance" "server_2+" {
   metadata = {
     "ssh_authorized_keys" = local.micro_instance_config.metadata.ssh_authorized_keys
     "user_data" = base64encode(
-      templatefile("${path.module}/templates/worker_user_data.sh",
+      templatefile("${path.module}/templates/server.sh",
         {
           server_0_ip    = local.ampere_instance_config.server_ip_0,
           token          = random_string.cluster_token.result,
     }))
   }
-  depends_on = [oci_core_instance.server_2]
+  depends_on = [oci_core_instance.server_1]
 }

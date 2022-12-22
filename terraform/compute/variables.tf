@@ -23,32 +23,6 @@ variable "ssh_authorized_keys" {
   type        = list(any)
 }
 
-variable "master_1_user_data" {
-  description = "Commands to be ran at boot for the bastion instance. Default installs Kali headless"
-  type        = string
-  default     = <<EOT
-#!/bin/sh
-sudo apt-get update
-EOT
-}
-
-variable "master_2_user_data" {
-  description = "Commands to be ran at boot for the bastion instance. Default installs Kali headless"
-  type        = string
-  default     = <<EOT
-#!/bin/sh
-sudo apt-get update
-EOT
-}
-
-variable "worker_user_data" {
-  description = "Commands to be ran at boot for the bastion instance. Default installs Kali headless"
-  type        = string
-  default     = <<EOT
-#!/bin/sh
-sudo apt-get update
-EOT
-}
 
 variable "cidr_blocks" {
   description = "CIDRs of the network, use index 0 for everything"
@@ -65,8 +39,6 @@ locals {
     source_id   = "ocid1.image.oc1.us-sanjose-1.aaaaaaaaenffdpkvsm43uvyxtcjwd7yx7vynh5jn23a6rpqytj2lta5onaqq"
     source_type = "image"
 
-    ip_0 = "10.0.0.11"
-
     metadata = {
       "ssh_authorized_keys" = join("\n", var.ssh_authorized_keys)
     }
@@ -79,8 +51,6 @@ locals {
     // Canonical-Ubuntu-22.04-2022.11.06-0 us-sanjose-1
     source_id   = "ocid1.image.oc1.us-sanjose-1.aaaaaaaaudhtosvzok3k6csi2cnhsee7gfezgnkd7gq742gsoe4xjaxiaoja"
     source_type = "image"
-
-    ip_0 = "10.0.0.21"
     
     metadata = {
       "ssh_authorized_keys" = join("\n", var.ssh_authorized_keys)
