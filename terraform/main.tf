@@ -9,7 +9,7 @@ terraform {
 
 provider "oci" {
   region           = var.region
-  tenancy_ocid     = var.tenancy_ocid
+  tenancy_ocid     = "test"
   user_ocid        = var.user_ocid
   fingerprint      = var.fingerprint
   private_key      = var.private_key
