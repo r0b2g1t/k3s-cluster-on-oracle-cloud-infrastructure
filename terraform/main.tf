@@ -8,8 +8,6 @@ terraform {
 }
 
 provider "oci" {
-  private_key = var.private_key
-  private_key_password = var.private_key_password
 }
 
 module "network" {
