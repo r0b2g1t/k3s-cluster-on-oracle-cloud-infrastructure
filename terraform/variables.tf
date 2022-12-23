@@ -13,10 +13,10 @@ variable "private_key" {
   type        = string
 }
 
-variable "private_key_password" {
+/*variable "private_key_password" {
   description = "Password for private key to use for signing"
   type        = string
-}
+}*/
 
 variable "region" {
   description = "The region to connect to. Default: eu-frankfurt-1"
