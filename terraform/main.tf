@@ -1,14 +1,14 @@
 terraform {
   required_providers {
     oci = {
-      source = "oracle/oci"
+      source  = "oracle/oci"
       version = ">= 4.102.0"
     }
   }
 }
 
 provider "oci" {
-  private_key = var.private_key
+  private_key          = var.private_key
   private_key_password = var.private_key_password
 }
 
@@ -18,7 +18,7 @@ module "network" {
   compartment_id = var.compartment_id
   tenancy_ocid   = var.tenancy_ocid
 
-  cidr_blocks = local.cidr_blocks
+  cidr_blocks            = local.cidr_blocks
   ssh_managemnet_network = local.ssh_managemnet_network
 }
 

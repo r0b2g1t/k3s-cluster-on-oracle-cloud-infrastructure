@@ -10,10 +10,10 @@ variable "tenancy_ocid" {
 
 variable "cidr_blocks" {
   description = "CIDRs of the network, use index 0 for everything"
-  type        = list
+  type        = list(any)
 }
 
 variable "ssh_managemnet_network" {
   description = "Subnet allowed to ssh to hosts"
-  type = string
+  type        = string
 }

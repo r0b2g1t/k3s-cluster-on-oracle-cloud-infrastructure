@@ -13,7 +13,7 @@ resource "oci_core_instance" "server_0" {
   }
   create_vnic_details {
     subnet_id  = var.cluster_subnet_id
-    private_ip = cidrhost(var.cidr_blocks[0],10)
+    private_ip = cidrhost(var.cidr_blocks[0], 10)
     nsg_ids    = [var.permit_ssh_nsg_id]
   }
   metadata = {
@@ -21,8 +21,8 @@ resource "oci_core_instance" "server_0" {
     "user_data" = base64encode(
       templatefile("${path.module}/templates/server.sh",
         {
-          server_0_ip    = oci_core_instance.server_0.private_ip,
-          token          = random_string.cluster_token.result
+          server_0_ip = oci_core_instance.server_0.private_ip,
+          token       = random_string.cluster_token.result
       })
     )
   }
@@ -43,7 +43,7 @@ resource "oci_core_instance" "server_1" {
   }
   create_vnic_details {
     subnet_id  = var.cluster_subnet_id
-    private_ip = cidrhost(var.cidr_blocks[0],11)
+    private_ip = cidrhost(var.cidr_blocks[0], 11)
     nsg_ids    = [var.permit_ssh_nsg_id]
   }
   metadata = {
@@ -51,8 +51,8 @@ resource "oci_core_instance" "server_1" {
     "user_data" = base64encode(
       templatefile("${path.module}/templates/server.sh",
         {
-          server_0_ip    = oci_core_instance.server_0.private_ip,
-          token          = random_string.cluster_token.result
+          server_0_ip = oci_core_instance.server_0.private_ip,
+          token       = random_string.cluster_token.result
       })
     )
   }
@@ -74,17 +74,17 @@ resource "oci_core_instance" "server_2_3" {
     ocpus         = local.micro_instance_config.ocpus
   }
   create_vnic_details {
-    subnet_id = var.cluster_subnet_id
-    private_ip = cidrhost(var.cidr_blocks[0],count.index + 20)
-    nsg_ids   = [var.permit_ssh_nsg_id]
+    subnet_id  = var.cluster_subnet_id
+    private_ip = cidrhost(var.cidr_blocks[0], count.index + 20)
+    nsg_ids    = [var.permit_ssh_nsg_id]
   }
   metadata = {
     "ssh_authorized_keys" = local.micro_instance_config.metadata.ssh_authorized_keys
     "user_data" = base64encode(
       templatefile("${path.module}/templates/server.sh",
         {
-          server_0_ip    = oci_core_instance.server_0.private_ip,
-          token          = random_string.cluster_token.result,
+          server_0_ip = oci_core_instance.server_0.private_ip,
+          token       = random_string.cluster_token.result,
     }))
   }
   depends_on = [oci_core_instance.server_1]
