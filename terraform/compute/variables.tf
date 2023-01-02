@@ -26,7 +26,7 @@ variable "ssh_authorized_keys" {
 
 variable "cidr_blocks" {
   description = "CIDRs of the network, use index 0 for everything"
-  type        = list
+  type        = list(any)
 }
 
 locals {
@@ -35,8 +35,8 @@ locals {
     ocpus    = 2
     ram      = 12
 
-    // Canonical-Ubuntu-22.04-aarch64-2022.11.06-0 us-sanjose-1	
-    source_id   = "ocid1.image.oc1.us-sanjose-1.aaaaaaaaenffdpkvsm43uvyxtcjwd7yx7vynh5jn23a6rpqytj2lta5onaqq"
+    // Canonical-Ubuntu-22.04-Minimal-aarch64-2022.11.05-0 eu-frankfurt-1
+    source_id   = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaapb65ywn23pl6t6dzc2bk56k4azbvnmsndcr6bfmn5eoei5toc53a"
     source_type = "image"
 
     metadata = {
@@ -48,10 +48,10 @@ locals {
     ocpus    = 1
     ram      = 1
 
-    // Canonical-Ubuntu-22.04-2022.11.06-0 us-sanjose-1
-    source_id   = "ocid1.image.oc1.us-sanjose-1.aaaaaaaaudhtosvzok3k6csi2cnhsee7gfezgnkd7gq742gsoe4xjaxiaoja"
+    // Canonical-Ubuntu-22.04-Minimal-aarch64-2022.11.05-0 eu-frankfurt-1
+    source_id   = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaapb65ywn23pl6t6dzc2bk56k4azbvnmsndcr6bfmn5eoei5toc53a"
     source_type = "image"
-    
+
     metadata = {
       "ssh_authorized_keys" = join("\n", var.ssh_authorized_keys)
     }
