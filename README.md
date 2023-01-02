@@ -16,7 +16,7 @@ export TF_VAR_region="<REGION_NAME>"
 export TF_VAR_tenancy_ocid="<TENANCY_OICD>"
 export TF_VAR_user_ocid="<USER_OICD>"
 export TF_VAR_fingerprint="<RSA_FINGERPRINT>"
-export TF_VAR_private_key_path="<PATH_TO_YOUR_PRIVATE_KEY>"
+export TF_VAR_private_key="<PRIVATE_KEY>"
 export TF_VAR_ssh_authorized_keys='["<SSH_PUBLIC_KEY>"]'
 ```
 
