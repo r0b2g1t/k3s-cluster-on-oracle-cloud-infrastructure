@@ -6,3 +6,4 @@
 *.hcl
 *.info
 *.tfstate.backup
+.history/
