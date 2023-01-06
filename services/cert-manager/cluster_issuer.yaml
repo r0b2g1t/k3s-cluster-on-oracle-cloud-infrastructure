@@ -4,7 +4,7 @@ metadata:
   name: letsencrypt-prod
 spec:
   acme:
-    email: <your_email>@<your-domain>.<tld> # replace
+    email: YOUR_EMAIL_HERE # replace
     privateKeySecretRef:
       name: prod-issuer-account-key
     server: https://acme-v02.api.letsencrypt.org/directory
@@ -12,3 +12,4 @@ spec:
       - http01:
           ingress:
             class: traefik
+        selector: {}

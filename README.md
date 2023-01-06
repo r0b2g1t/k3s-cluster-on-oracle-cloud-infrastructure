@@ -1,4 +1,4 @@
-# Free K3s Cluster on the Oracle Cloud Infrastructure
+# Free K3s Cluster on fedora CoreOS on Oracle Cloud Infrastructure (OCI)
 
 This project is based on the [k3s-cluster-on-oracle-cloud-infrastructure](https://github.com/r0b2g1t/k3s-cluster-on-oracle-cloud-infrastructure) project which aims to automatically deploy a K3s cluster with four nodes, that is composed of only always free infrastructure resources on Oracle Cloud Infrastructure (OCI).
 
@@ -30,22 +30,19 @@ export TF_VAR_ssh_authorized_keys='["<SSH_PUBLIC_KEY>"]'
 If you are deploying to a region other than uk-london-1, then you will also need to configure the init_server_image and init_agent_image variables in the same way as those above and set them to the OCID of the [Oracle-Linux-9.0-aarch64-2022.08.17-0](https://docs.oracle.com/en-us/iaas/images/image/cab2edc5-68e2-4a00-85b3-3abd7ec738ad/) and [Oracle-Linux-9.0-2022.08.17-0](https://docs.oracle.com/en-us/iaas/images/image/ad80dd84-5042-4832-a2d4-d45d283b74fa/) images respectively for your region of choice.
 
 ## Initial Deployment
-Deploying the initial infrastructure is a straight forwards process. First, start with a Terraform init:
+Deploying the initial infrastructure is a straight forwards process:
 
 ```sh
+#  Firstly, start with a Terraform init:
 terraform init
-```
-Second, you have to create a Terraform plan by this command:
 
-```sh
+# Secondly, create a Terraform plan:
 terraform plan -out .tfplan
 
-```
-And last apply the plan:
-
-```sh
+# And finally, apply the plan:
 terraform apply ".tfplan"
 ```
+
 After a couple minutes, the OCI network and compute instances will have been created and be up and running. They can then be connected to via SSH to then install Fedora CoreOS, and subsequently, K3s, manually. The default username is opc.
 ```sh
 ssh -i ~/.ssh/[YOUR_KEY_FILE] opc@[SERVER_0_PUBLIC_IP]
@@ -142,22 +139,22 @@ scp core@<SERVER_NODE_1_PUBLIC_IP>:/etc/rancher/k3s/k3s.yaml ~/.kube/config
 sed -i 's/127.0.0.1/EXTERNAL_IP_OR_DNS_ENTRY/' ~/.kube/config
 ```
 
-You can now use ```kubectl``` on your local machine to manage your cluster and check the nodes:
+You can now use `kubectl` on your local machine to manage your cluster and check the nodes:
 
 ```sh
 kubectl get nodes
 ```
 
 ## Longhorn Installation
-Finally, you have to deploy [Longhorn](https://longhorn.io) the distributed block storage by the following commands of the ```kubectl``` or ```helm``` method:
+Finally, you have to deploy [Longhorn](https://longhorn.io) the distributed block storage by the following commands of the `kubectl` or `helm` method:
 
-Method 1 by ```kubectl```:
+Method 1 by `kubectl`:
 ```sh
 kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.2.3/deploy/longhorn.yaml
 ```
 
-Method 2 by ```helm```:
-You can find a shell script with all commands in the ```services``` folder which run all the following commands at once.
+Method 2 by `helm`:
+You can find a shell script with all commands in the `services` folder which run all the following commands at once.
 ```sh
 helm repo add longhorn https://charts.longhorn.io
 helm repo update
@@ -171,7 +168,7 @@ kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storagec
 kubectl patch storageclass longhorn -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 ```
 
-Check the Longhorn ```storageclass```:
+Check the Longhorn `storageclass`:
 ```sh
 kubectl get storageclass
 ```
@@ -181,52 +178,36 @@ After a some minutes all pods are in the running state and you can connect to th
 kubectl port-forward deployment/longhorn-ui 8000:8000 -n longhorn-system
 ```
 
-Use this URL to access the interface: ```http://127.0.0.1:8000``` .
+Use this URL to access the interface: `http://127.0.0.1:8000` .
 
 ## Automatically certificate creation via Let's Encrypt
-For propagating your services, it is strongly recommended to use SSL encryption. In this case you have to deploy certificates for all of your services which should be reachable at the internet. To fulfill this requirement you can use the [```cert-manager```](https://cert-manager.io/) deployment in the ```services\cert-manager``` folder.
+For propagating your services, it is strongly recommended to use TLS encryption. In this case you have to deploy certificates for all of your services which should be reachable via the internet. To fulfill this requirement you can use the [`cert-manager`](https://cert-manager.io/) deployment in the `services/cert-manager/` directory. A more detailed explanation of how to set this up can be found on [sysadmins.co.za](https://sysadmins.co.za/https-using-letsencrypt-and-traefik-with-k3s/).
 
-First, you have to execute the ```cert-manager.sh``` or the following commands:
+These instructions assume that you already have some service running in your cluster tyhat you wish to expose.
+
+Firstly, you need to install cert-manager either by Helm using the `services/cert-manager/cert-manager.sh` script, or by [applying YAML files from Github](https://cert-manager.io/docs/installation/kubectl/) as follows:
 ```sh
-helm repo add jetstack https://charts.jetstack.io
-helm repo update
-
-helm install \
-  cert-manager jetstack/cert-manager \
-  --namespace cert-manager \
-  --create-namespace \
-  --version v1.7.1 \
-  --set installCRDs=true
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.10.1/cert-manager.yaml
 ```
 
-Second, add a cluster issuer by editing and deploy ```cluster_issuer.yaml```file by replacing it with your email address  and your domain:
+Secondly, add a ClusterIssuer by replacing the placeholder email address in the `services/cert-manager/cluster_issuer.yaml` file with your own and the applying it into your cluster:
 ```sh
-...
-spec:
-  acme:
-    email: <your_email>@<your-domain>.<tld> # replace
-...
+sed -i 's/YOUR_EMAIL_HERE/your.real.email@address.com/' services/cert-manager/cluster_issuer.yaml
+
+k apply -f services/cert-manager/cluster_issuer.yaml
 ```
 
-Finally, when you deploy a service you have to add an ingress resource. You can use the example file ```ingress_example.yaml``` and edit it for your service:
+Finally, when you deploy a service you have to add an ingress resource. You can use the example file `services/cert-manager/ingress_example.yaml` and edit it for your service:
 ```sh
-...
-spec:
-  rules:
-  - host: <subdomain>.<your-domain>.<tld>                # replace
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: <service-name>                    # replace
-          servicePort: 80
-  tls:
-  - hosts:
-    - <subdomain>.<your-domain>.<tld>                    # replace
-    secretName: <subdomain>-<your-domain>-<tld>-prod-tls # replace
-...
+sed -i 's/YOUR_DOMAIN_HERE/your-real-domain.com/g' services/cert-manager/ingress_example.yaml
+
+sed -i 's/YOUR_SERVICE_HERE/your-real-service-name/' services/cert-manager/ingress_example.yaml
+
+k apply -f services/cert-manager/ingress_example.yaml
 ```
 
 The last step needs to be done for every service. In this deployment step the cert-manager will handle the communication to Let's Encrypt and add the certificate to your service ingress resource.
+
 ## To Do's
-- Terraform Load Balancer deployment
+ * Automate the deployment of Fedora CoreOS and K3s
+ * Terraform Load Balancer deployment
