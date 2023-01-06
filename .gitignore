@@ -1,8 +1,9 @@
 .DS_Store
 .env
-*.terraform
 .tfplan
-*.tfstate
 *.hcl
 *.info
+*.terraform
+*.tfstate
 *.tfstate.backup
+fedora_coreos_mine/
