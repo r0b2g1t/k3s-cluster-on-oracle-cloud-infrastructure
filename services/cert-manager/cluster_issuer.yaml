@@ -9,7 +9,7 @@ spec:
       name: prod-issuer-account-key
     server: https://acme-v02.api.letsencrypt.org/directory
     solvers:
-      - http01:
-          ingress:
-            class: traefik
-        selector: {}
+    - http01:
+        ingress:
+          class: traefik
+      selector: {}

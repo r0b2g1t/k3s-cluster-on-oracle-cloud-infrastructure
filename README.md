@@ -208,6 +208,18 @@ k apply -f services/cert-manager/ingress_example.yaml
 
 The last step needs to be done for every service. In this deployment step the cert-manager will handle the communication to Let's Encrypt and add the certificate to your service ingress resource.
 
+### Multiple Subdomains for a Single Domain
+The nice thing about this approach is that it allows you to easily get around the issue of Let's Encrypt not allowing for wildcard certificates when using the [HTTP01 Challenge Type](https://letsencrypt.org/docs/challenge-types/#http-01-challenge). This allows you to essentially have unlimited number of subdomains routed to different services/applications just by creating a new Ingress resource for each one.
+
+All you need to do is create a DNS A record that points to one or more of your node IP addresses, then create a CNAME DNS record that maps the wildcard subdomain address (i.e. *.example.com) to the A record you just created. For example:
+
+| Type  | Host name   | Data                                                   |
+| ----- | ----------  | ------------------------------------------------------ |
+| A     | example.com | 123.45.67.85, 123.45.67.86, 123.45.67.87, 123.45.67.89 |
+| CNAME | *.example   | example.com.                                           | 
+
+Once you have the DNS entries set up, you can then just create an ingress for each sub-domain that you want to use. You should use the same .spec.tls.secretName for each one. Each Ingress resource needs to be in the same namespace as the Service is is routing to.
+
 ## To Do's
  * Automate the deployment of Fedora CoreOS and K3s
  * Terraform Load Balancer deployment
