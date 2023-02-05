@@ -12,3 +12,4 @@ spec:
       - http01:
           ingress:
             class: traefik
+            

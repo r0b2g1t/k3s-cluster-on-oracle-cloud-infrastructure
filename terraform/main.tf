@@ -1,8 +1,16 @@
 terraform {
+  cloud {
+    organization = "sredevopsdev"
+    workspaces {
+      name = "showcase"
+    }
+  }
+  required_version = ">= 1.0.0"
   required_providers {
     oci = {
       source  = "oracle/oci"
-      version = ">= 4.102.0"
+      version = ">= 3.70.0"
+      source  = "oracle/oci"
     }
   }
 }
