@@ -21,7 +21,7 @@ resource "oci_core_instance" "server_0" {
     "user_data" = base64encode(
       templatefile("${path.module}/templates/server.sh",
         {
-          server_0_ip = oci_core_instance.server_0.private_ip,
+          server_0_ip = cidrhost(var.cidr_blocks[0],10),
           token       = random_string.cluster_token.result
       })
     )
