@@ -1,10 +1,4 @@
 terraform {
-  cloud {
-    organization = "sredevopsdev"
-    workspaces {
-      name = "showcase"
-    }
-  }
   required_version = ">= 1.0.0"
   required_providers {
     oci = {
