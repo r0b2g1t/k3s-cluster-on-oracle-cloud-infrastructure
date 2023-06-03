@@ -18,7 +18,7 @@ spec:
     image: rancher/k3s-upgrade
   # Version numbers can be found at:
   # https://github.com/k3s-io/k3s/releases
-  version: v1.27.1+k3s1
+  version: v1.27.2+k3s1
 ---
 # Agent plan.
 apiVersion: upgrade.cattle.io/v1
@@ -43,5 +43,5 @@ spec:
     image: rancher/k3s-upgrade
   # Version numbers can be found at:
   # https://github.com/k3s-io/k3s/releases
-  version: v1.27.1+k3s1
+  version: v1.27.2+k3s1
 
