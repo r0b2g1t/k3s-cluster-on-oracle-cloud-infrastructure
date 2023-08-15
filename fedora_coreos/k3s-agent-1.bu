@@ -1,0 +1,93 @@
+variant: fcos
+version: 1.4.0
+passwd:
+  users:
+  - name: core
+    ssh_authorized_keys:
+    # Add your SSH key here.
+    - ssh-rsa AAAAB3Nza...7Sgy core
+
+storage:
+  files:
+  - path: /etc/hostname
+    mode: 0644
+    contents:
+      inline: k3s-agent-1
+  - path: /etc/NetworkManager/system-connections/ens3f0.nmconnection
+    mode: 0600
+    contents:
+      inline: | 
+        [connection]
+        id=ens3f0
+        uuid=abf23dc5-c087-4df3-abe1-b1b9a9c61d90
+        type=ethernet
+        autoconnect-retries=1
+        interface-name=ens3f0
+
+        [ethernet]
+
+        [ipv4]
+        dhcp-timeout=90
+        dhcp-vendor-class-identifier=anaconda-Linux
+        may-fail=false
+        method=auto
+
+        [ipv6]
+        addr-gen-mode=eui64
+        dhcp-timeout=90
+        method=auto
+
+        [proxy]
+
+        [user]
+        org.freedesktop.NetworkManager.origin=nm-initrd-generator
+  - path: /etc/NetworkManager/system-connections/ens3f1.nmconnection
+    mode: 0600
+    contents:
+      inline: | 
+        [connection]
+        id=ens3f1
+        uuid=dc7612e9-f662-489a-8a13-fd6a2fa566d4
+        type=ethernet
+        autoconnect=false
+        interface-name=ens3f1
+
+        [ethernet]
+
+        [ipv4]
+        method=auto
+
+        [ipv6]
+        addr-gen-mode=eui64
+        method=auto
+
+        [proxy]
+  - path: /etc/zincati/config.d/51-rollout-wariness.toml
+    contents:
+      inline: |
+        [identity]
+        rollout_wariness = 0.4
+  - path: /etc/zincati/config.d/55-updates-strategy.toml
+    contents:
+      inline: |
+        [updates]
+        strategy = "periodic"
+        [[updates.periodic.window]]
+        days = [ "Mon" ]
+        start_time = "03:00"
+        length_minutes = 60
+  - path: /home/core/install_ks3.sh
+    mode: 0750
+    user:
+      name: core
+    group:
+      name: core
+    contents:
+      inline: |
+        #!/usr/bin/bash
+
+        curl -sfL https://get.k3s.io | \
+            sh -s - \
+            agent \
+            --server https://10.0.0.10:6443 \
+            --token "[RANDOM_TOKEN_GENERATED_BY_TERRAFORM]"

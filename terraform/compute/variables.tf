@@ -13,6 +13,16 @@ variable "cluster_subnet_id" {
   type        = string
 }
 
+variable "permit_http_nsg_id" {
+  description = "NSG to permit HTTP(S)"
+  type        = string
+}
+
+variable "permit_kubectl_nsg_id" {
+  description = "NSG to permit Kubectl"
+  type        = string
+}
+
 variable "permit_ssh_nsg_id" {
   description = "NSG to permit SSH"
   type        = string
@@ -23,30 +33,46 @@ variable "ssh_authorized_keys" {
   type        = list(any)
 }
 
-variable "master_1_user_data" {
+variable "init_server_image" {
+  description = "The OCID for the aarch64 server image for the initial installation, must match the configured region"
+  type        = string
+  # Oracle-Linux-9.0-aarch64-2022.08.17-0
+  # https://docs.oracle.com/en-us/iaas/images/oracle-linux-9x/
+  default     = "ocid1.image.oc1.uk-london-1.aaaaaaaaf5niayyw6ldf5hec4hspbfarsh4hl7d6ylzwxv2aijdxajq6xfpa"
+}
+
+variable "init_agent_image" {
+  description = "The OCID for the x86_64 agent image for the initial installation, must match the configured region"
+  type        = string
+  # Oracle-Linux-9.0-2022.08.17-0
+  # https://docs.oracle.com/en-us/iaas/images/oracle-linux-9x/
+  default     = "ocid1.image.oc1.uk-london-1.aaaaaaaavxuer26obsl2wedl56d5i5nok3uav7hdqy7tqq5ioqmtlt2xpqxq"
+}
+
+variable "server_0_user_data" {
   description = "Commands to be ran at boot for the bastion instance. Default installs Kali headless"
   type        = string
   default     = <<EOT
 #!/bin/sh
-sudo apt-get update
+sudo dnf install podman
 EOT
 }
 
-variable "master_2_user_data" {
+variable "server_1_user_data" {
   description = "Commands to be ran at boot for the bastion instance. Default installs Kali headless"
   type        = string
   default     = <<EOT
 #!/bin/sh
-sudo apt-get update
+sudo dnf install podman
 EOT
 }
 
-variable "worker_user_data" {
+variable "agent_user_data" {
   description = "Commands to be ran at boot for the bastion instance. Default installs Kali headless"
   type        = string
   default     = <<EOT
 #!/bin/sh
-sudo apt-get update
+sudo dnf install podman
 EOT
 }
 
@@ -55,28 +81,24 @@ locals {
     shape_id = "VM.Standard.A1.Flex"
     ocpus    = 2
     ram      = 12
-    // Canonical-Ubuntu-20.04-aarch64-2021.12.01-0
-    source_id   = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaaerzsdjk2ahjgfgf2zxtxtnpl3n3ew6qse2g2lxnnumxui7hsmsja"
+    source_id   = "${var.init_server_image}"
     source_type = "image"
+    server_ip_0 = "10.0.0.10"
     server_ip_1 = "10.0.0.11"
-    server_ip_2 = "10.0.0.12"
-    // release: v0.21.5-k3s2r1
-    k3os_image = "https://github.com/rancher/k3os/releases/download/v0.21.5-k3s2r1/k3os-arm64.iso"
     metadata = {
       "ssh_authorized_keys" = join("\n", var.ssh_authorized_keys)
     }
   }
-  worker_instance_config = {
+  agent_instance_config = {
     shape_id = "VM.Standard.E2.1.Micro"
     ocpus    = 1
     ram      = 1
-    // Canonical-Ubuntu-20.04-aarch64-2021.12.01-0
-    source_id   = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaadlurdwl77zh7l5dlngngxjormr3xvqvapiaiv6gbuffo6dzfu6la"
+    source_id   = "${var.init_agent_image}"
     source_type = "image"
-    worker_ip_0 = "10.0.0.21"
-    worker_ip_1 = "10.0.0.22"
-    // release: v0.21.5-k3s2r1
-    k3os_image = "https://github.com/rancher/k3os/releases/download/v0.21.5-k3s2r1/k3os-amd64.iso"
+    agent_ips = [
+      "10.0.0.20",
+      "10.0.0.21"
+    ]
     metadata = {
       "ssh_authorized_keys" = join("\n", var.ssh_authorized_keys)
     }

@@ -1,20 +1,25 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: mysite-nginx-ingress
+  # namespace: mysite
   annotations:
-    kubernetes.io/ingress.class: "traefik"
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
 spec:
   rules:
-  - host: <subdomain>.<your-domain>.<tld>                # replace
+  - host: YOUR_DOMAIN_HERE
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: mysite-nginx-service
-          servicePort: 80
+          service:
+            name: YOUR_SERVICE_HERE
+            port:
+                number: 8080
   tls:
   - hosts:
-    - <subdomain>.<your-domain>.<tld>                    # replace
-    secretName: <subdomain>-<your-domain>-<tld>-prod-tls # replace
+    - YOUR_DOMAIN_HERE
+    secretName: mysite-tls-prod
