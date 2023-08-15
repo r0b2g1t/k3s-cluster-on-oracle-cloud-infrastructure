@@ -36,17 +36,17 @@ variable "ssh_authorized_keys" {
 variable "init_server_image" {
   description = "The OCID for the aarch64 server image for the initial installation, must match the configured region"
   type        = string
-  # Oracle-Linux-9.0-aarch64-2022.08.17-0
+  # Oracle-Linux-9.2-aarch64-2023.07.31-0
   # https://docs.oracle.com/en-us/iaas/images/oracle-linux-9x/
-  default     = "ocid1.image.oc1.uk-london-1.aaaaaaaaf5niayyw6ldf5hec4hspbfarsh4hl7d6ylzwxv2aijdxajq6xfpa"
+  default     = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaadcbxrvltybqificx2qirexrmszspuvuo6bnmqbhpkr6vvih4cqda"
 }
 
 variable "init_agent_image" {
   description = "The OCID for the x86_64 agent image for the initial installation, must match the configured region"
   type        = string
-  # Oracle-Linux-9.0-2022.08.17-0
+  # Oracle-Linux-9.2-aarch64-2023.07.31-0
   # https://docs.oracle.com/en-us/iaas/images/oracle-linux-9x/
-  default     = "ocid1.image.oc1.uk-london-1.aaaaaaaavxuer26obsl2wedl56d5i5nok3uav7hdqy7tqq5ioqmtlt2xpqxq"
+  default     = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaadcbxrvltybqificx2qirexrmszspuvuo6bnmqbhpkr6vvih4cqda"
 }
 
 variable "server_0_user_data" {
